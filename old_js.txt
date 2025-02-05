@@ -1,0 +1,166 @@
+window.onload = async function () {
+
+
+    // definitions
+    const subButton = document.getElementById('submitButton'); // HTML submit button
+
+    const sidebarItems = document.querySelectorAll('.sidebar ul li'); // defs for the sidebar
+    const formPages = document.querySelectorAll('.form-page');
+    const nextButton = document.querySelectorAll('.next');
+
+
+    // Sidebar: click to navigate between pages
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', function () {
+            // Remove 'active' class from all sidebar items
+            sidebarItems.forEach(sideItem => sideItem.classList.remove('active'));
+
+            // Add 'active' class to the clicked sidebar item
+            this.classList.add('active');
+
+            // Hide all form pages
+            formPages.forEach(page => page.classList.remove('active'));
+
+            // Get the id of the clicked sidebar item (e.g., 'preliminary-nav')
+            const targetId = this.id.replace('-nav', '');
+
+            // Show the corresponding form page by adding 'active'
+            const targetPage = document.getElementById(targetId);
+            targetPage.classList.add('active');
+        });
+    });
+
+
+    // Next: click to go to the next page
+    nextButton.forEach(button => {
+        button.addEventListener('click', function () {
+            // Get the next page id from data-next attribute
+            const nextPage = this.getAttribute('data-next');
+
+            // Hide all pages
+            formPages.forEach(page => page.classList.remove('active'));
+
+            // Show the next page
+            document.getElementById(nextPage).classList.add('active');
+        });
+    });
+
+    // Submitting the form --> turn it into data that we can use later for the json file generation
+    const submitForm = () => {
+        console.log("Submit form function triggered");
+
+        const formPage1 = new FormData(document.getElementById('custom-form'));
+        const dataObj = {};
+
+        formPage1.forEach((value, key) => {
+            dataObj[key] = value;
+        });
+
+        console.log('OG data: ', dataObj);
+
+        const modifiedData = formatData(dataObj);
+
+        console.log('Modified data: ', modifiedData)
+
+        const jsonData = JSON.stringify(modifiedData, null, 2);
+        const jsonBlob = new Blob([jsonData], { type: 'application/json' });
+
+        console.log('Created modified blob: ', jsonBlob);
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(jsonBlob);
+        link.download = 'input.json';
+
+        window.Electron.download({
+            url: link.href,
+            filename: 'input.json'
+        });
+        console.log('Download function called');
+
+        window.Electron.onDownloadComplete((event, message) => {
+            console.log(message);
+            const filePath = "C:\\Users\\dorothy.fanzhu\\Downloads\\input.json";
+        });
+    };
+
+    // make it so that clicking will submit the form
+    subButton.addEventListener('click', submitForm);
+
+
+    // Formatting the data for Json file
+    function formatData(dataObj) {
+        const formatted = [];
+        const camera = {
+            camera_id: dataObj['camera_id'],
+            camera_name: dataObj['camera_name'],
+            video_path: dataObj['video_path'],
+            model_path: dataObj['model_path'],
+            plc_ip: dataObj['plc_ip'],
+            rpi_ip: dataObj['rpi_ip'],
+            features: [
+                {
+                    feature: "backwards",
+                    config: {
+                        trapezoid: [
+                            [dataObj['BTcoord1x'], dataObj['BTcoord1y']],
+                            [dataObj['BTcoord2x'], dataObj['BTcoord2y']],
+                            [dataObj['BTcoord3x'], dataObj['BTcoord3y']],
+                            [dataObj['BTcoord4x'], dataObj['BTcoord4y']],
+                        ],
+                        area_dim: { width: dataObj['BWidth'], length: dataObj['BLength'] },
+                        backwards_line: { start: dataObj['back_line_start'], end: dataObj['back_line_end'] }
+                    }
+                },
+                {
+                    feature: "collision-nearmiss",
+                    config: {
+                        trapezoid: [
+                            [dataObj['CNcoord1x'], dataObj['CNcoord1y']],
+                            [dataObj['CNcoord2x'], dataObj['CNcoord2y']],
+                            [dataObj['CNcoord3x'], dataObj['CNcoord3y']],
+                            [dataObj['CNcoord4x'], dataObj['CNcoord4y']],
+                        ],
+                        columns: [
+                            [dataObj['columnsx']], [dataObj['columnsy']],
+                        ],
+                        area_dim: { width: dataObj['CN_area_dim_width'], length: dataObj['CN_area_dim_length'] }
+                    }
+                },
+                {
+                    feature: "pedestrian",
+                    config: {
+                        trapezoid: [
+                            [dataObj['Pcoord1x'], dataObj['Pcoord1y']],
+                            [dataObj['Pcoord2x'], dataObj['Pcoord2y']],
+                            [dataObj['Pcoord3x'], dataObj['Pcoord3y']],
+                            [dataObj['Pcoord4x'], dataObj['Pcoord4y']],
+                        ],
+                        zone1: [
+                            [dataObj['zone11x'], dataObj['zone11y']],
+                            [dataObj['zone12x'], dataObj['zone12y']],
+                            [dataObj['zone13x'], dataObj['zone13y']],
+                            [dataObj['zone14x'], dataObj['zone14y']],
+                        ],
+                        zone2: [
+                            [dataObj['zone21x'], dataObj['zone21y']],
+                            [dataObj['zone22x'], dataObj['zone22y']],
+                            [dataObj['zone23x'], dataObj['zone23y']],
+                            [dataObj['zone24x'], dataObj['zone24y']],
+                        ],
+                        zone3: [
+                            [dataObj['zone31x'], dataObj['zone31y']],
+                            [dataObj['zone32x'], dataObj['zone32y']],
+                            [dataObj['zone33x'], dataObj['zone33y']],
+                            [dataObj['zone34x'], dataObj['zone34y']],
+                        ],
+                        area_dim: { width: dataObj['PWidth'], length: dataObj['PLength'] }
+                    }
+                }
+            ]
+        };
+
+        formatted.push(camera);
+
+        return formatted;
+    };
+}

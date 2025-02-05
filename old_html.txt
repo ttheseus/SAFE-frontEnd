@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <title>safe customization</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div class="main">
+        <div class="form-container">
+            <div class="sidebar">
+                <ul>
+                    <li id="preliminary-nav" class="active">Camera Preliminaries</li>
+                    <li id="cam-custom-nav">Camera Customizations</li>
+                    <li id="backwards-nav">Backwards</li>
+                    <li id="collision-nearmiss-nav">Collision & Nearmiss</li>
+                    <li id="pedestrian-nav">Pedestrian</li>
+                    <li id="zones-nav">Zones</li>
+                </ul>
+            </div>
+
+            <div class="form-content">
+
+                <div class="rectangle"></div>
+                <div class="container_type1">
+                    <h1> SAFE PROGRAM CUSTOMIZATION </h1>
+                </div>
+
+                <form id="custom-form">
+                    <div class="form-page active" id="preliminary">
+                        <h2>Camera Preliminaries</h2>
+
+                        <label for="num-cam">Number of Cameras:</label>
+                        <input type="number" id="num-cam" name="num-cam" required>
+
+                        <label for="num-zone">Number of Zones:</label>
+                        <input type="number" id="num-zone" name="num-zone" required>
+
+                        <!-- and put stuff here later -->
+                        <button type="button" class="next" data-next="cam-custom">Next</button>
+                    </div>
+
+                    <div class="form-page" id="cam-custom">
+
+                        <h2>Camera Customizations</h2>
+
+                        <label for="camera_id">Camera ID:</label>
+                        <input type="text" id="camera_id" name="camera_id"> <br>
+
+                        <label for="camera_name">Camera Name:</label>
+                        <input type="text" id="camera_name" name="camera_name"> <br>
+
+                        <label for="video_path">Video Path:</label>
+                        <input type="text" id="video_path" name="video_path"> <br>
+
+                        <label for="model_path">Model Path:</label>
+                        <input type="text" id="model_path" name="model_path"> <br>
+
+                        <label for="plc_ip">PLC IP:</label>
+                        <input type="text" id="plc_ip" name="plc_ip"> <br>
+
+                        <label for="rpi_ip">RPI IP:</label>
+                        <input type="text" id="rpi_ip" name="rpi_ip"> <br>
+
+                        <button type="button" class="next" data-next="backwards">Next</button>
+
+                    </div>
+
+                    <div class="form-page" id="backwards">
+
+                            <h2>Backwards</h2>
+
+                            <p>Backwards Trapezoid:</p>
+
+                            <div class="input-group">
+                                <label for="BTcoord1">Trapezoid Coord 1:</label>
+                                <input class="coords" type="number" id="BTcoord1x" name="BTcoord1x" placeholder="X"
+                                    required>
+                                <input class="coords" type="number" id="BTcoord1y" name="BTcoord1y" placeholder="Y"
+                                    required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="BTcoord2">Trapezoid Coord 2:</label>
+                                <input class="coords" type="number" id="BTcoord2x" name="BTcoord2x" placeholder="X"
+                                    required>
+                                <input class="coords" type="number" id="BTcoord2y" name="BTcoord2y" placeholder="Y"
+                                    required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="BTcoord3">Trapezoid Coord 3:</label>
+                                <input class="coords" type="number" id="BTcoord3x" name="BTcoord3x" placeholder="X"
+                                    required>
+                                <input class="coords" type="number" id="BTcoord3y" name="BTcoord3y" placeholder="Y"
+                                    required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="BTcoord4">Trapezoid Coord 4:</label>
+                                <input class="coords" type="number" id="BTcoord4x" name="BTcoord4x" placeholder="X"
+                                    required>
+                                <input class="coords" type="number" id="BTcoord4y" name="BTcoord4y" placeholder="Y"
+                                    required>
+                            </div>
+
+                            <p></p>
+
+                            <label for="B_area_dim_width">Area Width:</label>
+                            <input type="number" id="B_area_dim_width" name="BWidth">
+
+                            <label for="B_area_dim_length">Area Length:</label>
+                            <input type="number" id="B_area_dim_length" name="BLength">
+
+                            <label for="backwards_line_start">Backwards Line Start:</label>
+                            <input type="number" id="back_line_start" name="back_line_start">
+
+                            <label for="backwards_line_end">Backwards Line End:</label>
+                            <input type="number" id="back_line_end" name="back_line_end">
+                        
+
+                        <button type="button" class="next" data-next="collision-nearmiss">Next</button>
+
+                    </div>
+
+                    <div class="form-page" id="collision-nearmiss">
+
+                            <h2>Collision & Nearmiss</h2>
+
+                            <p>Collision/Nearmiss Trapezoid:</p>
+
+                            <div class="input-group">
+                                <label for="CNcoord1">Trapezoid Coord 1:</label>
+                                <input class="coords" type="number" id="CNcoord1x" name="CNcoord1x" placeholder="X"
+                                    required>
+                                <input class="coords" type="number" id="CNcoord1y" name="CNcoord1y" placeholder="Y"
+                                    required>
+                            </div>
+
+                            <div class="input-group">
+
+                                <label for="CNcoord2">Trapezoid Coord 2:</label>
+                                <input class="coords" type="number" id="CNcoord2x" name="CNcoord2x" placeholder="X"
+                                    required>
+                                <input class="coords" type="number" id="CNcoord2y" name="CNcoord2y" placeholder="Y"
+                                    required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="CNcoord3">Trapezoid Coord 3:</label>
+                                <input class="coords" type="number" id="CNcoord3x" name="CNcoord3x" placeholder="X"
+                                    required>
+                                <input class="coords" type="number" id="CNcoord3y" name="CNcoord3y" placeholder="Y"
+                                    required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="CNcoord4">Trapezoid Coord 4:</label>
+                                <input class="coords" type="number" id="CNcoord4x" name="CNcoord4x" placeholder="X"
+                                    required>
+                                <input class="coords" type="number" id="CNcoord4y" name="CNcoord4y" placeholder="Y"
+                                    required>
+                            </div>
+
+                            <p></p>
+
+                            <div class="input-group">
+                                <label for="columns">Column coords:</label>
+                                <input class="coords" type="number" id="columnx" name="columnx" placeholder="X"
+                                    required>
+                                <input class="coords" type="number" id="columny" name="columny" placeholder="Y"
+                                    required>
+                            </div>
+
+                            <label for="CN_area_dim_width">Area Width:</label>
+                            <input type="number" id="CN_area_dim_width" name="CN_area_dim_width"> <br>
+
+                            <label for="CN_area_dim_length">Area Length:</label>
+                            <input type="number" id="CN_area_dim_width" name="CN_area_dim_width"> <br>
+
+                        <button type="button" class="next" data-next="pedestrian">Next</button>
+
+                    </div>
+
+                    <div class="form-page" id="pedestrian">
+                        <h3>pedestrian</h3>
+
+                        <p>Pedestrian Trapezoid:</p>
+
+                        <div class="input-group">
+                            <label for="Pcoord1">Trapezoid Coord 1:</label>
+                            <input class="coords" type="number" id="Pcoord1x" name="Pcoord1x" placeholder="X" required>
+                            <input class="coords" type="number" id="Pcoord1y" name="Pcoord1y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+
+                            <label for="Pcoord2">Trapezoid Coord 2:</label>
+                            <input class="coords" type="number" id="Pcoord2x" name="Pcoord2x" placeholder="X" required>
+                            <input class="coords" type="number" id="Pcoord2y" name="Pcoord2y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="Pcoord3">Trapezoid Coord 3:</label>
+                            <input class="coords" type="number" id="Pcoord3x" name="Pcoord3x" placeholder="X" required>
+                            <input class="coords" type="number" id="Pcoord3y" name="Pcoord3y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="Pcoord4">Trapezoid Coord 4:</label>
+                            <input class="coords" type="number" id="Pcoord4x" name="Pcoord4x" placeholder="X" required>
+                            <input class="coords" type="number" id="Pcoord4y" name="Pcoord4y" placeholder="Y" required>
+                        </div>
+
+                        <button type="button" class="next" data-next="zones">Next</button>
+
+                    </div>
+
+                    <div class="form-page" id="zones">
+                        <p>Zone 1:</p>
+
+                        <div class="input-group">
+                            <label for="zone1">Coord 1:</label>
+                            <input class="coords" type="number" id="zone11x" name="zone11x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone11y" name="zone11y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+
+                            <label for="zone12">Coord 2:</label>
+                            <input class="coords" type="number" id="zone12x" name="zone12x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone12y" name="zone12y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="zone13">Coord 3:</label>
+                            <input class="coords" type="number" id="zone13x" name="zone13x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone13y" name="zone13y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="zone14">Coord 4:</label>
+                            <input class="coords" type="number" id="zone14x" name="zone14x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone14y" name="zone14y" placeholder="Y" required>
+                        </div>
+
+                        <p>Zone 2:</p>
+
+                        <div class="input-group">
+                            <label for="zone2">Coord:</label>
+                            <input class="coords" type="number" id="zone21x" name="zone21x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone21y" name="zone21y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+
+                            <label for="zone22">Coord 2:</label>
+                            <input class="coords" type="number" id="zone22x" name="zone22x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone22y" name="zone22y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="zone23">Coord 3:</label>
+                            <input class="coords" type="number" id="zone23x" name="zone23x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone23y" name="zone23y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="zone24">Coord 4:</label>
+                            <input class="coords" type="number" id="zone24x" name="zone24x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone24y" name="zone24y" placeholder="Y" required>
+                        </div>
+
+                        <p>Zone 3:</p>
+
+                        <div class="input-group">
+                            <label for="zone3">Coord:</label>
+                            <input class="coords" type="number" id="zone31x" name="zone31x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone31y" name="zone31y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+
+                            <label for="zone32">Coord 2:</label>
+                            <input class="coords" type="number" id="zone32x" name="zone32x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone32y" name="zone32y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="zone33">Coord 3:</label>
+                            <input class="coords" type="number" id="zone33x" name="zone33x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone33y" name="zone33y" placeholder="Y" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="zone34">Coord 4:</label>
+                            <input class="coords" type="number" id="zone34x" name="zone34x" placeholder="X" required>
+                            <input class="coords" type="number" id="zone34y" name="zone34y" placeholder="Y" required>
+                        </div>
+
+                        <p></p>
+
+                        <label for="P_area_dim_width=">Area Width:</label>
+                        <input type="number" id="P_area_dim_width" name="PWidth"> <br>
+
+                        <label for="P_area_dim_length">Area Length:</label>
+                        <input type="number" id="P_area_dim_length" name="PLength"> <br>
+
+                        <button type="button" class="submit" id="submitButton">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="renderer.js"></script>
+</body>
+
+</html>

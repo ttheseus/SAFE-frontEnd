@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <title>safe customization</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div class="main">
+        <div class="form-container">
+            <div class="sidebar">
+                <div class="rectangle2"></div>
+                <ul>
+                    <h3>Preliminaries</h3>
+                    <p></p>
+                    <li id="preliminary-nav" class="active">
+                        <span class="circle"></span>
+                        Cameras & Zones
+                    </li>
+                    <li id="guide-nav">
+                        <span class="circle"></span>
+                        Guide
+                    </li>
+                </ul>
+            </div>
+
+            <div class="form-content">
+
+                <div class="rectangle"></div>
+                <div class="container_type1">
+                    <h1> SAFE PROGRAM CUSTOMIZATION </h1>
+                </div>
+
+                <form id="custom-form">
+                    <div class="form-page active" id="preliminary">
+                        <h2>Camera Initial Setup</h2>
+
+                        <p></p>
+
+                        <div class="input-group">
+                            <label for="num-cam">NUMBER OF CAMERAS:</label>
+                            <input type="number" id="num-cam" name="num-cam" required>
+                        </div>
+
+                        <button type="button" class="generateButton" data-next="cam-custom">NEXT</button>
+                    </div>
+
+                    <div id="camera-forms-container"></div>
+
+                </form>
+
+                <div class="form-page" id="guide">
+                    <h2>Guide</h2>
+
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="renderer.js"></script>
+</body>
+
+</html>
