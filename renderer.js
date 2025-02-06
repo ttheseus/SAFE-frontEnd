@@ -6,7 +6,7 @@ window.addEventListener('DOMContentLoaded', function () {
     const sidebarItems = document.querySelectorAll('.sidebar ul li'); // defs for the sidebar
     const formPages = document.querySelectorAll('.form-page');
     let currentSidebarItem = this.document.querySelector('.sidebar ul li.active');
-    const nextButton = document.querySelectorAll('.next');
+    let zones = {};
 
     const generateButton = document.querySelector('.generateButton');
     const numCamInput = document.getElementById('num-cam'); // more generalized customizations
@@ -35,6 +35,18 @@ window.addEventListener('DOMContentLoaded', function () {
             // Show the corresponding form page by adding 'active'
             const targetPage = document.getElementById(targetId);
             targetPage.classList.add('active');
+
+
+            //GFX
+            const formPage = document.querySelector('.form-page.active');
+
+            // Apply the fade-in class to trigger the animation
+            formPage.classList.add('fade-in');
+
+            // Remove the fade-in class after the animation is done to reset it for next click
+            formPage.addEventListener('click', function () {
+                formPage.classList.remove('fade-in');
+            });
         });
     });
 
@@ -47,6 +59,11 @@ window.addEventListener('DOMContentLoaded', function () {
     const submitForm = () => {
         console.log("Submit form function triggered");
 
+        if (!numCamInput) {
+            console.error('num-cam input not found!');
+            return;
+        }
+
         const formPage1 = new FormData(document.getElementById('custom-form'));
         const dataObj = {};
 
@@ -56,11 +73,11 @@ window.addEventListener('DOMContentLoaded', function () {
 
         console.log('OG data: ', dataObj);
 
-        const modifiedData = formatData(dataObj);
+        const modifiedData = formatData(dataObj, numCamInput, numZones);
 
         console.log('Modified data: ', modifiedData)
 
-        const jsonData = JSON.stringify(modifiedData, null, 2);
+        const jsonData = JSON.stringify(modifiedData, null, 1);
         const jsonBlob = new Blob([jsonData], { type: 'application/json' });
 
         console.log('Created modified blob: ', jsonBlob);
@@ -77,7 +94,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
         window.Electron.onDownloadComplete((event, message) => {
             console.log(message);
-            const filePath = "C:\\Users\\dorothy.fanzhu\\Downloads\\input.json";
+
+            const filePath = `${downloadsPath}\\input.json`;
+
+            console.log(`File saved to: ${filePath}`);
         });
     };
 
@@ -89,79 +109,73 @@ window.addEventListener('DOMContentLoaded', function () {
 
 
     // Formatting the data for Json file
-    function formatData(dataObj, numCamInput) {
+    function formatData(dataObj, numCamInput, numZones) {
         const numCams = parseInt(numCamInput.value);
 
-        for (let camIndex = 1; camIndex <= numCams; camIndex++) {
-            const formatted = [];
+        const formatted = [];
+
+        for (let cameraIndex = 1; cameraIndex <= numCams; cameraIndex++) {
             const camera = {
-                camera_id: dataObj[`camera_id_${camIndex}`],
-                camera_name: dataObj['camera_name'],
-                video_path: dataObj['video_path'],
-                model_path: dataObj['model_path'],
-                plc_ip: dataObj['plc_ip'],
-                rpi_ip: dataObj['rpi_ip'],
+                camera_id: cameraIndex,
+                camera_name: dataObj[`camera_name_${cameraIndex}`],
+                video_path: dataObj[`video_path_${cameraIndex}`],
+                model_path: dataObj[`model_path_${cameraIndex}`],
+                plc_ip: dataObj[`plc_ip_${cameraIndex}`],
+                rpi_ip: dataObj[`rpi_ip_${cameraIndex}`],
                 features: [
                     {
                         feature: "backwards",
                         config: {
                             trapezoid: [
-                                [dataObj['BTcoord1x'], dataObj['BTcoord1y']],
-                                [dataObj['BTcoord2x'], dataObj['BTcoord2y']],
-                                [dataObj['BTcoord3x'], dataObj['BTcoord3y']],
-                                [dataObj['BTcoord4x'], dataObj['BTcoord4y']],
+                                [parseInt(dataObj[`BTcoord1x_${cameraIndex}`]), parseInt(dataObj[`BTcoord1y_${cameraIndex}`])],
+                                [parseInt(dataObj[`BTcoord2x_${cameraIndex}`]), parseInt(dataObj[`BTcoord2y_${cameraIndex}`])],
+                                [parseInt(dataObj[`/BTcoord3x_${cameraIndex}`]), parseInt(dataObj[`BTcoord3y_${cameraIndex}`])],
+                                [parseInt(dataObj[`BTcoord4x_${cameraIndex}`]), parseInt(dataObj[`BTcoord4y_${cameraIndex}`])]
                             ],
-                            area_dim: { width: dataObj['BWidth'], length: dataObj['BLength'] },
-                            backwards_line: { start: dataObj['back_line_start'], end: dataObj['back_line_end'] }
+                            area_dim: { width: parseInt(dataObj[`BWidth_${cameraIndex}`]), length: parseInt(dataObj[`BLength_${cameraIndex}`]) },
+                            backwards_line: { start: parseInt(dataObj[`back_line_start_${cameraIndex}`]), end: parseInt(dataObj[`back_line_end_${cameraIndex}`]) }
                         }
                     },
                     {
                         feature: "collision-nearmiss",
                         config: {
                             trapezoid: [
-                                [dataObj['CNcoord1x'], dataObj['CNcoord1y']],
-                                [dataObj['CNcoord2x'], dataObj['CNcoord2y']],
-                                [dataObj['CNcoord3x'], dataObj['CNcoord3y']],
-                                [dataObj['CNcoord4x'], dataObj['CNcoord4y']],
+                                [dataObj[`CNcoord1x_${cameraIndex}`], dataObj[`CNcoord1y_${cameraIndex}`]],
+                                [dataObj[`CNcoord2x_${cameraIndex}`], dataObj[`CNcoord2y_${cameraIndex}`]],
+                                [dataObj[`CNcoord3x_${cameraIndex}`], dataObj[`CNcoord3y_${cameraIndex}`]],
+                                [dataObj[`CNcoord4x_${cameraIndex}`], dataObj[`CNcoord4y_${cameraIndex}`]],
                             ],
                             columns: [
-                                [dataObj['columnsx']], [dataObj['columnsy']],
+                                [dataObj[`columnsx_${cameraIndex}`]], [dataObj[`columnsy_${cameraIndex}`]],
                             ],
-                            area_dim: { width: dataObj['CN_area_dim_width'], length: dataObj['CN_area_dim_length'] }
+                            area_dim: { width: dataObj[`CNWidth_${cameraIndex}`], length: dataObj[`CNLength_${cameraIndex}`] }
                         }
                     },
                     {
                         feature: "pedestrian",
                         config: {
                             trapezoid: [
-                                [dataObj['Pcoord1x'], dataObj['Pcoord1y']],
-                                [dataObj['Pcoord2x'], dataObj['Pcoord2y']],
-                                [dataObj['Pcoord3x'], dataObj['Pcoord3y']],
-                                [dataObj['Pcoord4x'], dataObj['Pcoord4y']],
+                                [dataObj[`Pcoord1x_${cameraIndex}`], dataObj[`Pcoord1y_${cameraIndex}`]],
+                                [dataObj[`Pcoord2x_${cameraIndex}`], dataObj[`Pcoord2y_${cameraIndex}`]],
+                                [dataObj[`Pcoord3x_${cameraIndex}`], dataObj[`Pcoord3y_${cameraIndex}`]],
+                                [dataObj[`Pcoord4x_${cameraIndex}`], dataObj[`Pcoord4y_${cameraIndex}`]],
                             ],
-                            zone1: [
-                                [dataObj['zone11x'], dataObj['zone11y']],
-                                [dataObj['zone12x'], dataObj['zone12y']],
-                                [dataObj['zone13x'], dataObj['zone13y']],
-                                [dataObj['zone14x'], dataObj['zone14y']],
-                            ],
-                            zone2: [
-                                [dataObj['zone21x'], dataObj['zone21y']],
-                                [dataObj['zone22x'], dataObj['zone22y']],
-                                [dataObj['zone23x'], dataObj['zone23y']],
-                                [dataObj['zone24x'], dataObj['zone24y']],
-                            ],
-                            zone3: [
-                                [dataObj['zone31x'], dataObj['zone31y']],
-                                [dataObj['zone32x'], dataObj['zone32y']],
-                                [dataObj['zone33x'], dataObj['zone33y']],
-                                [dataObj['zone34x'], dataObj['zone34y']],
-                            ],
-                            area_dim: { width: dataObj['PWidth'], length: dataObj['PLength'] }
+                            // zones dynamically generated here
+                            area_dim: { width: dataObj[`PWidth_${cameraIndex}`], length: dataObj[`PLength_${cameraIndex}`] }
                         }
                     }
                 ]
             };
+
+            for (let zoneIndex = 1; zoneIndex <= zones[cameraIndex]; zoneIndex++) {
+                const zoneKey = `zone_${zoneIndex}`;
+                camera.features[2].config[zoneKey] = [
+                    [dataObj[`zone${zoneIndex}1x_${cameraIndex}`], dataObj[`zone${zoneIndex}1y_${cameraIndex}`]],
+                    [dataObj[`zone${zoneIndex}2x_${cameraIndex}`], dataObj[`zone${zoneIndex}2y_${cameraIndex}`]],
+                    [dataObj[`zone${zoneIndex}3x_${cameraIndex}`], dataObj[`zone${zoneIndex}3y_${cameraIndex}`]],
+                    [dataObj[`zone${zoneIndex}4x_${cameraIndex}`], dataObj[`zone${zoneIndex}4y_${cameraIndex}`]],
+                ]
+            }
 
             formatted.push(camera);
         }
@@ -205,10 +219,32 @@ window.addEventListener('DOMContentLoaded', function () {
                 addSidebarNav(camIndex);
             }
 
+            addSubmitButton();
+
             setupSidebarLinks();
+
+            setTimeout(() => {
+                const formContainers = document.querySelectorAll('.form-container');
+                formContainers.forEach(container => {
+                    container.classList.add('fade-in'); // Or 'active' if you prefer transitions
+                });
+            });
         });
     }
 
+
+    const addSubmitButton = () => {
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'Submit Form';
+        submitButton.type = 'button';
+        submitButton.classList.add('submit-btn');  // Add a class for easy identification
+
+        // Add event listener for the submit button
+        submitButton.addEventListener('click', submitForm);
+
+        // Append the submit button to the sidebar (outside camera sections)
+        sidebar.appendChild(submitButton);
+    }
 
     // Function to re-setup sidebar links after generate button click
     function setupSidebarLinks() {
@@ -271,7 +307,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 <span>Camera ${cameraIndex}</span>
                 <li>
                     <span class="circle"></span>
-                    <a href="#camera-form-${cameraIndex}">Camera Setup</a>
+                    <a href="#camera-form-${cameraIndex}">Camera</a>
                 </li>
                 <li>
                     <span class="circle"></span>
@@ -279,7 +315,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 </li>
                 <li>
                     <span class="circle"></span>
-                    <a href="#collision-nearmiss-form-${cameraIndex}">Collision/Nearmiss</a>
+                    <a href="#collision-nearmiss-form-${cameraIndex}">Collision</a>
                 </li>
                 <li>
                     <span class="circle"></span>
@@ -425,6 +461,14 @@ window.addEventListener('DOMContentLoaded', function () {
 
                 <label for="CNLength_${cameraIndex}">Area Length:</label>
                 <input type="number" id="CNLength_${cameraIndex}" name="CNLength_${cameraIndex}"> <br>
+
+                <p></p>
+
+                <div class="input-group">
+                    <label for="columnCoords_${cameraIndex}">Column Coords:</label>
+                    <input class="coords" type="number" id="columnx_${cameraIndex}" name="columnx_${cameraIndex}" placeholder="X" required>
+                    <input class="coords" type="number" id="columny_${cameraIndex}" name="columny_${cameraIndex}" placeholder="Y"required>
+                </div>
             `;
         cameraFormsContainer.appendChild(collisionNearmissForm);
 
@@ -463,6 +507,12 @@ window.addEventListener('DOMContentLoaded', function () {
                     <input class="coords" type="number" id="Pcoord4x_${cameraIndex}" name="Pcoord4x_${cameraIndex}" placeholder="X" required>
                     <input class="coords" type="number" id="Pcoord4y_${cameraIndex}" name="Pcoord4y_${cameraIndex}" placeholder="Y" required>
                 </div>
+
+                <label for="PWidth_${cameraIndex}">Area Width:</label>
+                <input type="number" id="PWidth_${cameraIndex}" name="PWidth_${cameraIndex}"> <br>
+
+                <label for="PLength_${cameraIndex}">Area Length:</label>
+                <input type="number" id="PLength_${cameraIndex}" name="PLength_${cameraIndex}"> <br>
             `;
         cameraFormsContainer.appendChild(pedestrianForm);
 
@@ -480,7 +530,7 @@ window.addEventListener('DOMContentLoaded', function () {
         zoneForm.classList.add('form-page');
         zoneForm.id = `zone-form-${cameraIndex}`;
         zoneForm.innerHTML = `
-                <h4>Zone Initialization (Camera ${cameraIndex})</h4>
+                <h2>Zone Initialization (Camera ${cameraIndex})</h2>
 
                 <div class="input-group">
                     <label for="num-zone-${cameraIndex}">NUMBER OF ZONES:</label>
@@ -494,6 +544,7 @@ window.addEventListener('DOMContentLoaded', function () {
         cameraFormsContainer.appendChild(zoneContainer);
 
         const numZoneInput = document.getElementById(`num-zone-${cameraIndex}`);
+        numZones = parseInt(numZoneInput.value);
 
         const generateZonesButton = zoneForm.querySelector('.generateZones');
 
@@ -504,6 +555,8 @@ window.addEventListener('DOMContentLoaded', function () {
                 return; // Exit early if the value is invalid
             }
             console.log(numZones);
+
+            zones[cameraIndex] = numZones;
 
             // Clear any previous zone forms
             const existingZoneForms = document.querySelectorAll(`#zone-form-${cameraIndex} .zone-setup`);
@@ -545,13 +598,6 @@ window.addEventListener('DOMContentLoaded', function () {
 
                 zoneContainer.appendChild(zoneForm);
             }
-
-            const submitButton = document.createElement('button');
-            submitButton.textContent = 'Submit Form';
-            submitButton.type = 'button';
-            zoneContainer.appendChild(submitButton);
-
-            submitButton.addEventListener('click', submitForm);
         });
     };
 });
