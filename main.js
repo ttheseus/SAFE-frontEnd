@@ -3,6 +3,7 @@ import { download } from 'electron-dl';  // Using import for electron-dl
 import path from 'path';
 import fs from 'fs';
 import url from 'url';
+import os from 'os';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -13,7 +14,7 @@ async function createWindow() {
     width: 900,
     height: 900,
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.cjs'),
       devTools: true
@@ -26,36 +27,6 @@ async function createWindow() {
     console.log('Download request received:', url, filename);
     downloadFile(url, filename);
   });
-
-  // ipcMain.on('modify-json-file', (event, filePath) => {
-  //   fs.readFile(filePath, 'utf-8', (err, data) => {
-  //     if (err) {
-  //       console.error("Error reading file: ", err);
-  //       return;
-  //     }
-
-  //     try {
-  //       let jsonData = JSON.parse(data);
-  //       console.log('Original data: ', jsonData);
-
-  //       jsonData.modified = true;
-  //       // modify data
-
-  //       const modifiedJson = JSON.stringify(jsonData, null, 2);
-        
-  //       fs.writeFile(filePath, modifiedJson, 'utf-8', (err) => {
-  //         if (err) {
-  //           console.error('Error writing modified file: ', err);
-  //           return;
-  //         }
-  //         console.log('File successfully modified!');
-  //         event.reply('json-modified', 'File modified successfully!');
-  //       });
-  //     } catch (parseError) {
-  //       console.error('Error parsing JSON: ', parseError);
-  //     }
-  //   });
-  // });
 }
 
 app.whenReady().then(createWindow);
