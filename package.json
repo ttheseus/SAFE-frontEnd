@@ -1,18 +1,45 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "description": "front end testing",
+  "description": "Json file customization for SAFE",
   "main": "./main.js",
   "type": "module",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder"
   },
   "author": "Dorothy",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^34.0.1"
+    "electron": "^34.0.1",
+    "electron-builder": "^23.6.0"
   },
   "dependencies": {
     "electron-dl": "^4.0.0"
+  },
+  "build": {
+    "appId": "com.SAFE",
+    "productName": "SAFE JSON Customization",
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "index.html",
+      "main.js",
+      "renderer.js",
+      "preload.cjs",
+      "styles.css",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/logo.ico"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/logo.png"
+    },
+    "directories": {
+      "buildResources": "build"
+    }
   }
 }
