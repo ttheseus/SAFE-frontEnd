@@ -1,125 +1,151 @@
-window.addEventListener('DOMContentLoaded', function () {
+/*
 
-    // definitions
-    const subButton = document.getElementById('submitButton'); // HTML submit button
+HTML CODE
 
-    const sidebarItems = document.querySelectorAll('.sidebar ul li'); // defs for the sidebar
-    const formPages = document.querySelectorAll('.form-page');
-    let currentSidebarItem = this.document.querySelector('.sidebar ul li.active');
-    let zones = {};
+*/
 
-    const generateButton = document.querySelector('.generateButton');
-    const numCamInput = document.getElementById('num-cam'); // more generalized customizations
+window.addEventListener('DOMContentLoaded', function () { // DO NOT DELETE. This needed for Electron to run properly
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //*                                           DEFINITIONS & GLOBAL VARIABLES                                              *//
+    /*                                                                                                                         */
+
+    const subButton = document.getElementById('submitButton'); // gets submit button for the form submissions from html/css
+    const generateButton = document.querySelector('.generateButton'); // gets generate button for dynamic html
+
+    const sidebarItems = document.querySelectorAll('.sidebar ul li'); // gets sidebar items from html/css
+    const sidebar = document.querySelector('.sidebar ul'); // gets the sidebar from html/css
+    const formPages = document.querySelectorAll('.form-page'); // gets the form page from html/css
     const cameraFormsContainer = document.getElementById('camera-forms-container'); // Container for generated forms
-    const sidebar = document.querySelector('.sidebar ul');
 
-    // Sidebar: click to navigate between pages + GFX
+    const numCamInput = document.getElementById('num-cam'); // gets the number of cameras from the html file
+    let zones = {}; // array that stores the number of zones per camera (eg if you have 3 zones for Camera 1, zones[0] = 3)
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //*                                               MAIN SIDEBAR FUNCTION                                                   *//
+    /*                                                                                                                         */
+    
+
+    /* > MAIN SIDEBAR
+
+        - Handles clicks to navigate between the sidebar pages on the first section
+        - IS NOT USED FOR THE SECOND SECTION
+
+    */
     sidebarItems.forEach(item => {
-        item.addEventListener('click', function () {
-            // Remove 'active' class from all sidebar items
+        item.addEventListener('click', function () { // click activation
+
+            // Initial setup:
             sidebarItems.forEach(sideItem => {
-                sideItem.classList.remove('active');
-                sideItem.querySelector('.circle').style.backgroundColor = '#9aa3ac';
+                sideItem.classList.remove('active'); // Removes 'active' class from sidebar items
+                sideItem.querySelector('.circle').style.backgroundColor = '#9aa3ac'; // Makes sure the circle is its unactivated color
             });
 
-            // Add 'active' class to the clicked sidebar item
-            this.classList.add('active');
-            this.querySelector('.circle').style.backgroundColor = '#4c6c8c';
+            // Clicked item process:
+            this.classList.add('active'); // add 'active' to clicked sidebar item
+            this.querySelector('.circle').style.backgroundColor = '#4c6c8c'; // circle color changed to active color
+            formPages.forEach(page => page.classList.remove('active')); // Hide all other form pages so that the pages don't overlap 
 
-            // Hide all form pages
-            formPages.forEach(page => page.classList.remove('active'));
+            // Showing the page: 
+            const targetId = this.id.replace('-nav', ''); // get id of clicked sidebar item (e.g., 'preliminary-nav')
+            const targetPage = document.getElementById(targetId); // gets the page of clicked item 
+            targetPage.classList.add('active'); // adds 'active' to the page to display it
 
-            // Get the id of the clicked sidebar item (e.g., 'preliminary-nav')
-            const targetId = this.id.replace('-nav', '');
-
-            // Show the corresponding form page by adding 'active'
-            const targetPage = document.getElementById(targetId);
-            targetPage.classList.add('active');
-
-
-            //GFX
-            const formPage = document.querySelector('.form-page.active');
-
-            // Apply the fade-in class to trigger the animation
-            formPage.classList.add('fade-in');
-
-            // Remove the fade-in class after the animation is done to reset it for next click
-            formPage.addEventListener('click', function () {
-                formPage.classList.remove('fade-in');
+            // GFX:
+            const formPage = document.querySelector('.form-page.active'); // get the active form page
+            formPage.classList.add('fade-in'); // apply the fade-in class (css) to the page trigger the animation
+            formPage.addEventListener('click', function () { // on click reset the animation for the next page
+                formPage.classList.remove('fade-in'); 
             });
         });
     });
 
-    // Display first page
-    formPages[0].classList.add('active');
-    sidebarItems[0].classList.add('active');
+    // Initial page display:
+    formPages[0].classList.add('active'); // Display the first page
+    sidebarItems[0].classList.add('active'); // Display the first page as active on the sidebar
 
 
-    // Submitting the form --> turn it into data that we can use later for the json file generation
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //*                                                SUBMISSION HANDLING                                                    *//
+    /*                                                                                                                         */
+    
+    /* > FORM SUBMISSION HANDLER
+
+        - turns the inputs into data that is used for the JSON file generation
+        - calls on a function to format the data
+        - downloads the data
+
+    */
+
+    /* > SUBMIT PROCESS
+
+        - Accesses, stores & formats data from the form
+        - Downloads the data
+
+    */
     const submitForm = () => {
-        console.log("Submit form function triggered");
 
-        if (!numCamInput) {
+        // Error handling:
+        if (!numCamInput) { // Won't submit the form unless there's a specified numCamInput value. Usually unreachable.
             console.error('num-cam input not found!');
             return;
         }
 
-        const formPage1 = new FormData(document.getElementById('custom-form'));
-        const dataObj = {};
+        // Initial setup:
+        const formPage1 = new FormData(document.getElementById('custom-form')); // Gets the filled out form data
+        const dataObj = {}; // Creates an array that will contain the data
 
-        formPage1.forEach((value, key) => {
-            dataObj[key] = value;
-        });
+        // Fill dataObj array:
+        formPage1.forEach((value, key) => { 
+            dataObj[key] = value; // pushes input values from the form into the array
+        }); 
+        // format to get a value from dataObj: dataObj['object_id_here']
+        // array contents are strings
 
-        console.log('OG data: ', dataObj);
+        // Format the data:
+        const modifiedData = formatData(dataObj, numCamInput); // variable holds the formatted data
 
-        const modifiedData = formatData(dataObj, numCamInput, numZones);
+        // Create JSON file:
+        const jsonData = JSON.stringify(modifiedData, null, 1); // Prettifies the JSON format (no other functionality)
+        const jsonBlob = new Blob([jsonData], { type: 'application/json' }); // Creates the JSON file
 
-        console.log('Modified data: ', modifiedData)
-
-        const jsonData = JSON.stringify(modifiedData, null, 1);
-        const jsonBlob = new Blob([jsonData], { type: 'application/json' });
-
-        console.log('Created modified blob: ', jsonBlob);
-
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(jsonBlob);
-        link.download = 'input.json';
-
-        window.Electron.download({
+        // Downloading JSON file:
+        const link = document.createElement('a'); // creates a blank link
+        link.href = URL.createObjectURL(jsonBlob); // fills link with the JSON file URL
+        link.download = 'input.json'; // downloads the JSON file with the file name 'input.json'
+        window.Electron.download({ // accesses Electron's download API to ensure the file is downloaded/saved properly
             url: link.href,
             filename: 'input.json'
-        });
-        console.log('Download function called');
-
-        window.Electron.onDownloadComplete((event, message) => {
-            console.log(message);
-
-            const filePath = `${downloadsPath}\\input.json`;
-
-            console.log(`File saved to: ${filePath}`);
-        });
+        }); // try not to change anything in this block as it's linked back to the preload.cjs. 
+            // Changing something here may cause something to break in the preload file.
     };
 
 
-    // make it so that clicking will submit the form
-    if (subButton) {
-        subButton.addEventListener('click', submitForm);
-    }
+    /* > DATA FORMATTER
 
+        - Correctly edits the dataObj data into proper JSON formatting
+        - Returns the data in the correct format
 
-    // Formatting the data for Json file
-    function formatData(dataObj, numCamInput, numZones) {
-        const numCams = parseInt(numCamInput.value);
+    */
+    function formatData(dataObj, numCamInput) {
 
-        const formatted = [];
+        // Initial setup:
+        const numCams = parseInt(numCamInput.value); // get the value of numCamInput
+        const formatted = []; // empty return value to be filled
 
-        for (let cameraIndex = 1; cameraIndex <= numCams; cameraIndex++) {
+        // Formatting:
+        for (let cameraIndex = 1; cameraIndex <= numCams; cameraIndex++) { // Handles the camera format dynamically
             const camera = {
                 camera_id: cameraIndex,
-                camera_name: dataObj[`camera_name_${cameraIndex}`],
-                video_path: dataObj[`video_path_${cameraIndex}`],
-                model_path: dataObj[`model_path_${cameraIndex}`],
+                camera_name: dataObj[`camera_name_${cameraIndex}`], // It is extremely important that what's in the dataObj
+                video_path: dataObj[`video_path_${cameraIndex}`], // square brackets are the IDs of what is generated in the
+                model_path: dataObj[`model_path_${cameraIndex}`], // HTML generation functions
                 plc_ip: dataObj[`plc_ip_${cameraIndex}`],
                 rpi_ip: dataObj[`rpi_ip_${cameraIndex}`],
                 features: [
@@ -129,7 +155,7 @@ window.addEventListener('DOMContentLoaded', function () {
                             trapezoid: [
                                 [parseInt(dataObj[`BTcoord1x_${cameraIndex}`]), parseInt(dataObj[`BTcoord1y_${cameraIndex}`])],
                                 [parseInt(dataObj[`BTcoord2x_${cameraIndex}`]), parseInt(dataObj[`BTcoord2y_${cameraIndex}`])],
-                                [parseInt(dataObj[`/BTcoord3x_${cameraIndex}`]), parseInt(dataObj[`BTcoord3y_${cameraIndex}`])],
+                                [parseInt(dataObj[`BTcoord3x_${cameraIndex}`]), parseInt(dataObj[`BTcoord3y_${cameraIndex}`])],
                                 [parseInt(dataObj[`BTcoord4x_${cameraIndex}`]), parseInt(dataObj[`BTcoord4y_${cameraIndex}`])]
                             ],
                             area_dim: { width: parseInt(dataObj[`BWidth_${cameraIndex}`]), length: parseInt(dataObj[`BLength_${cameraIndex}`]) },
@@ -160,14 +186,15 @@ window.addEventListener('DOMContentLoaded', function () {
                                 [dataObj[`Pcoord3x_${cameraIndex}`], dataObj[`Pcoord3y_${cameraIndex}`]],
                                 [dataObj[`Pcoord4x_${cameraIndex}`], dataObj[`Pcoord4y_${cameraIndex}`]],
                             ],
-                            // zones dynamically generated here
                             area_dim: { width: dataObj[`PWidth_${cameraIndex}`], length: dataObj[`PLength_${cameraIndex}`] }
+                            // zones are dynamically generated here
                         }
                     }
                 ]
             };
 
-            for (let zoneIndex = 1; zoneIndex <= zones[cameraIndex]; zoneIndex++) {
+            // Zones:
+            for (let zoneIndex = 1; zoneIndex <= zones[cameraIndex]; zoneIndex++) { // Generate zone formatting dynamically
                 const zoneKey = `zone_${zoneIndex}`;
                 camera.features[2].config[zoneKey] = [
                     [dataObj[`zone${zoneIndex}1x_${cameraIndex}`], dataObj[`zone${zoneIndex}1y_${cameraIndex}`]],
@@ -177,62 +204,77 @@ window.addEventListener('DOMContentLoaded', function () {
                 ]
             }
 
-            formatted.push(camera);
+            formatted.push(camera); // push the format to the blank return value
         }
 
-        return formatted;
+        return formatted; // return the formatting
     };
 
 
-    if (generateButton) {
-        generateButton.addEventListener('click', function () {
-            const numCams = parseInt(numCamInput.value);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //*                                                 FORM SECTION TWO                                                      *//
+    /*                                                                                                                         */
+    
+
+    /* > BUTTON TO GENERATE
+
+        - Sets up the second section of the form
+        - Triggers the dynamic HTML generation
+
+    */
+    if (generateButton) {
+        generateButton.addEventListener('click', function () { // begin process when button is clicked
+
+            // Initial setup:
+            const numCams = parseInt(numCamInput.value); // get the numCamInput value
+            sidebar.innerHTML = ''; // creates empty sidebar HTML
+            cameraFormsContainer.innerHTML = ''; // creates empty container HTML
+            formPages.forEach(page => page.classList.remove('active')); // clear existing pages from sidebar
+
+            // Error handling:
             if (isNaN(numCams) || numCams <= 0) {
                 alert("Please enter a valid non-negative number");
                 return;
-            }
+            } // throw an error if numCams is invalid
 
-            sidebar.innerHTML = '';
-            cameraFormsContainer.innerHTML = '';
-
-            // Clear existing form pages
-            formPages.forEach(page => page.classList.remove('active'));
-
-            for (let camIndex = 1; camIndex <= numCams; camIndex++) {
-                // Generate Camera Form
+            // HTML generation:
+            for (let camIndex = 1; camIndex <= numCams; camIndex++) { // dynamically generate new HTML
+                // Generate camera form HTML
                 generateCameraSetupForm(camIndex);
 
-                // Generate Backwards Feature Form for the camera
+                // Generate backwards form HTML
                 generateBackwardsForm(camIndex);
 
-                // Generate Collision/Nearmiss Form for the camera
+                // Generate collision/nearmiss form HTML
                 generateCollisionNearmissForm(camIndex);
 
-                // Generate Pedestrian Feature Form for the camera
+                // Generate pedestrian form HTML
                 generatePedestrianForm(camIndex);
 
-                // Generate Zone Forms for the camera
+                // Generate zone forms HTML
                 generateZoneForms(camIndex);
 
-                // Add sidebar navigation items for each feature (Backwards, Pedestrian, Zones)
+                // Add new sidebar items for each feature (camera, backwards, collision, pedestrian, zones)
                 addSidebarNav(camIndex);
             }
 
-            addSubmitButton();
+            // Final setup:
+            addSubmitButton(); // generate submit button in the sidebar
+            setupSidebarLinks(); // makes sure the new sidebar works (clicking on it will navigate to that page)
 
-            setupSidebarLinks();
-
-            setTimeout(() => {
+            // GFX:
+            setTimeout(() => { // fade in code for loading in the generation stuff but it lowkey doesn't work
                 const formContainers = document.querySelectorAll('.form-container');
                 formContainers.forEach(container => {
-                    container.classList.add('fade-in'); // Or 'active' if you prefer transitions
+                    container.classList.add('fade-in'); 
                 });
             });
         });
     }
 
-
+    // Add button to the sidebar
     const addSubmitButton = () => {
         const submitButton = document.createElement('button');
         submitButton.textContent = 'Submit Form';
@@ -246,11 +288,16 @@ window.addEventListener('DOMContentLoaded', function () {
         sidebar.appendChild(submitButton);
     }
 
-    // Function to re-setup sidebar links after generate button click
+    /* > NEW SIDEBAR
+
+        - Sets up the new sidebar to navigate between feature pages and cameras
+
+    */
+    // Functionality:
     function setupSidebarLinks() {
-        const sidebarItems = document.querySelectorAll('.sidebar ul li a');
-        const formPages = document.querySelectorAll('.form-page');
-        const circles = document.querySelectorAll('.sidebar-links .circle');
+        const sidebarItems = document.querySelectorAll('.sidebar ul li a'); // get new sidebar items
+        const formPages = document.querySelectorAll('.form-page'); // get new form pages
+        const circles = document.querySelectorAll('.sidebar-links .circle'); // get new circles
 
         sidebarItems.forEach(item => {
             item.addEventListener('click', function (event) {
@@ -293,16 +340,15 @@ window.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Function to add sidebar navigation for each feature (Backwards, Pedestrian, Zones)
+    // Setup:
     const addSidebarNav = (cameraIndex) => {
-        const sidebarItem = document.createElement('li');
-        sidebarItem.classList.add('sidebar-links');
 
-        const sidebarList = this.document.createElement('ul');
-        // const camHeader = this.document.createElement('span');
-        // camHeader.textContent = `Camera ${cameraIndex}`;
-        // sidebarItem.appendChild(camHeader);
+        // Initial setup:
+        const sidebarItem = document.createElement('li'); // create a list
+        sidebarItem.classList.add('sidebar-links'); // add the new sidebar css to the list
+        const sidebarList = this.document.createElement('ul'); // create the items in the list
 
+        // HTML generation:
         sidebarItem.innerHTML = `
                 <span>Camera ${cameraIndex}</span>
                 <li>
@@ -327,12 +373,18 @@ window.addEventListener('DOMContentLoaded', function () {
                 </li>
             `;
 
-        sidebarItem.appendChild(sidebarList);
-        sidebar.appendChild(sidebarItem);
+        sidebarItem.appendChild(sidebarList); // Push the HTML into the Items
+        sidebar.appendChild(sidebarItem); // Push the items into the sidebar
     };
 
 
-    // Generating HTML for form pages
+    /* > GENERATE HTML
+
+        - Generates HTML for each feature
+
+    */
+
+    // Camera information:
     const generateCameraSetupForm = (cameraIndex) => {
         const cameraSetupForm = document.createElement('div');
         cameraSetupForm.classList.add('form-page');
@@ -357,11 +409,9 @@ window.addEventListener('DOMContentLoaded', function () {
                 <input type="text" id="rpi_ip_${cameraIndex}" name="rpi_ip_${cameraIndex}" required>
             `;
         cameraFormsContainer.appendChild(cameraSetupForm);
-
-        // addNextButtonEventListeners();
     };
 
-    // Generate feature-specific pages for each camera
+    // Backwards:
     const generateBackwardsForm = (cameraIndex) => {
         const backwardsForm = document.createElement('div');
         backwardsForm.classList.add('form-page');
@@ -416,10 +466,9 @@ window.addEventListener('DOMContentLoaded', function () {
                 <input type="number" id="back_line_end_${cameraIndex}" name="back_line_end_${cameraIndex}">
             `;
         cameraFormsContainer.appendChild(backwardsForm);
-
-        // addNextButtonEventListeners();
     };
 
+    // Collision/Nearmiss:
     const generateCollisionNearmissForm = (cameraIndex) => {
         const collisionNearmissForm = document.createElement('div');
         collisionNearmissForm.classList.add('form-page');
@@ -471,10 +520,9 @@ window.addEventListener('DOMContentLoaded', function () {
                 </div>
             `;
         cameraFormsContainer.appendChild(collisionNearmissForm);
-
-        // addNextButtonEventListeners();
     };
 
+    // Pedestrian:
     const generatePedestrianForm = (cameraIndex) => {
         const pedestrianForm = document.createElement('div');
         pedestrianForm.classList.add('form-page');
@@ -515,17 +563,11 @@ window.addEventListener('DOMContentLoaded', function () {
                 <input type="number" id="PLength_${cameraIndex}" name="PLength_${cameraIndex}"> <br>
             `;
         cameraFormsContainer.appendChild(pedestrianForm);
-
-        // addNextButtonEventListeners();
     };
 
+    // Zones
     const generateZoneForms = (cameraIndex) => {
         const zoneContainer = document.createElement('div');
-
-        // const zoneHeader = document.createElement('h3');
-        // zoneHeader.textContent = `Zones for Camera ${cameraIndex}`;
-        // zoneContainer.appendChild(zoneHeader);
-
         const zoneForm = document.createElement('div');
         zoneForm.classList.add('form-page');
         zoneForm.id = `zone-form-${cameraIndex}`;
