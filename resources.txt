@@ -1,2 +1,20 @@
-https://www.freecodecamp.org/news/html-button-type-how-to-add-buttons-to-your-website/
-https://www.w3schools.com/tags/tag_input.asp
+Downloading Node.JS
+    > https://nodejs.org/en
+
+Downloading Electron:
+    >npm install electron --save-dev
+
+Initializing Electron (be in your electron app's directory)
+    > npm init 
+    It will prompt you to configure fields in package.json. Copy from the package.json in the github
+    (This should add a node_modules folder and package-lock.json)
+
+After Setup:
+    Copy paste all files from the github into the directory
+
+Command to run the code without building the app:
+    > npm start
+
+Command to build code and update the app:
+    > npm run dist
+    (This should add a 'dist' folder in the directory that will contain the application file)
