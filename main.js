@@ -1,9 +1,6 @@
 import { app, BrowserWindow, ipcMain, session } from 'electron';
-import { download } from 'electron-dl';  // Using import for electron-dl
 import path from 'path';
-import fs from 'fs';
 import url from 'url';
-import os from 'os';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -45,7 +42,7 @@ app.on('window-all-closed', function () {
 
 function downloadFile(url, filename) {
   // Define download path (you can modify this to a custom directory)
-  const downloadPath = path.join('C:\\Users\\dorothy.fanzhu\\Downloads', filename);
+  const downloadPath = path.join(app.getPath('downloads'), filename);
 
   session.defaultSession.downloadURL(url);
 
