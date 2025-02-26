@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" /> <!-- I think this is for the Electron development. Try not to change -->
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <title>JSON FILE EDITING</title>
+    <link rel="stylesheet" href="create.css" /> <!-- links the HTML to the CSS. DO NOT DELETE -->
+</head>
+
+<body>
+    <div class="main"> <!-- This is the white block behind all the other 'stuff' -->
+        <div class="form-container"> <!-- This can't be seen in the actual website, but is the sidebar + form content container -->
+            <div class="sidebar"> <!-- Darker block on the left that contains links to different pages -->
+                <button type="button" class="home" id="homeBtn"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                </button>
+                <ul>
+                    <h3>Preliminaries</h3>
+                    <p></p>
+                    <li id="preliminary-nav" class="active">
+                        <span class="circle"></span> <!-- all circles are visuals only -->
+                        File upload
+                    </li>
+                    <li id="guide-nav">
+                        <span class="circle"></span>
+                        Guide
+                    </li>
+                </ul>
+            </div>
+
+            <div class="form-content"> <!-- This isn't visible on the actual website, but contains the actual form stuff -->
+
+                <div class="rectangle"></div> <!-- GFX -->
+                <div class="container_type1"> <!-- This is the header container -->
+                    <h1> SAFE: JSON EDITING </h1>
+                </div>
+
+                <form id="upload-form"> <!-- This is the form that contains all the data needed to be formatted when the user clicks the submit button -->
+                    <div class="form-page active" id="preliminary"> <!-- Where the form inputs are -->
+                        <h2>File Upload</h2>
+
+                        <p></p>
+
+                        <div class="input-group">
+                            <label for="upload-btn">UPLOAD FILE</label>
+                            <input type="file" id="upload-btn" accept=".json, application/json"/>
+                        </div>
+
+                        <button type="button" class="generateButton" id="submit-file" data-next="edit-file">NEXT</button> <!-- Triggers HTML generation -->
+                    </div>
+
+                    <div id="camera-forms-container"></div> <!-- This is where the dynamic HTML will be generated -->
+
+                </form>
+
+                <div class="form-page" id="guide"> <!-- just the guide page, maybe write some better instructions later -->
+                    <h2>Guide</h2>
+                    <p>Welcome to the SAFE JSON file editing application.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="editRenderer.js"></script> <!-- links the script to the HTML. DO NOT DELETE -->
+</body>
