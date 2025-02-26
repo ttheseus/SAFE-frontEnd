@@ -11,18 +11,14 @@
   "author": "Dorothy",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^34.0.1",
+    "electron": "^34.2.0",
     "electron-builder": "^23.6.0"
-  },
-  "dependencies": {
-    "electron-dl": "^4.0.0"
   },
   "build": {
     "appId": "com.SAFE",
     "productName": "SAFE JSON Customization",
     "files": [
       "dist/**/*",
-      "node_modules/**/*",
       "index.html",
       "create.html",
       "edit.html",
