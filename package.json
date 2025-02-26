@@ -24,10 +24,15 @@
       "dist/**/*",
       "node_modules/**/*",
       "index.html",
+      "create.html",
+      "edit.html",
       "main.js",
       "renderer.js",
+      "createRenderer.js",
+      "editRenderer.js",
       "preload.cjs",
       "styles.css",
+      "create.css",
       "assets/**/*"
     ],
     "win": {
