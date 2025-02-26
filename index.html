@@ -1,39 +1,28 @@
 <!--
 
 CURRENTLY:
-    - The code will take in user inputs and CREATE a JSON file in the correct format
+    - The code gives the user two options, 1) create a new JSON file and 2) edit an uploaded
+    JSON file.
 
     - Most HTML is dynamically generated in the renderer.js file
 
     - BUGS:
         - After dynamically generating the zone code for camera 1, it stays on all 
-            screens for camera 2 (doesn't affect anything but it's just annoying)
+            screens for camera 2 (doesn't affect anything but it's just annoying) (FIXED)
 
         - If the user doesn't input a value for the camera number, the error that pops 
-            up won't allow them to continue trying to input a value
+            up won't allow them to continue trying to input a value (FIXED)
 
         - Clicking on the generate zones 'next' button will continuously generate more
              code - Try to make it so that if the user inputs another value and 
-             generates, it overrides what it has right now
+             generates, it overrides what it has right now (FIXED)
 
 
 FUTURE IMPROVEMENTS:
-    - Streamline code better for easier css formatting (a lot of unnecessary containers 
-        may create confusion)
-
     - After user submits, make a page that allows them to either quit the application or
         go back to the beginning
 
-    - This code if the FIRST option of TWO the user should get. The second option should 
-        be to upload/pull data from the SAFE program and edit it
-
-    - Better GFX
-
     - Optimize code so that the application is under 0.5GB
-
-    - Try to make each page a new HTMl file for 
-        a) easier editing
-        b) less funky sidebar code
 
 -->
 
@@ -51,66 +40,52 @@ FUTURE IMPROVEMENTS:
 
 <body>
     <div class="main"> <!-- This is the white block behind all the other 'stuff' -->
-        <div class="form-container"> <!-- This can't be seen in the actual website, but is the sidebar + form content container -->
-            <div class="sidebar"> <!-- Darker block on the left that contains links to different pages -->
-                <div class="rectangle2"></div> <!-- This can't be seen on the actual website but sits above the text for the sidebar. It's used for formatting -->
-                <ul> <!-- Sidebar items -->
-                    <h3>Preliminaries</h3>
-                    <p></p>
-                    <li id="preliminary-nav" class="active">
-                        <span class="circle"></span> <!-- all circles are visuals only -->
-                        Cameras & Zones
-                    </li>
-                    <li id="guide-nav">
-                        <span class="circle"></span>
-                        Guide
-                    </li>
-                </ul>
+        <h1>WELCOME</h1>
+
+        <div class="line"></div>
+
+        <div class = "content">
+            <p>Welcome to the SAFE JSON FILE config customization application. Please select one of the following options to continue.</p>
+        </div>
+
+        <div class="content1">
+            <div class="text">
+                <h2>CREATE</h2>
             </div>
 
-            <div class="form-content"> <!-- This isn't visible on the actual website, but contains the actual form stuff -->
-
-                <div class="rectangle"></div> <!-- GFX -->
-                <div class="container_type1"> <!-- This is the header container -->
-                    <h1> SAFE PROGRAM CUSTOMIZATION </h1>
-                </div>
-
-                <form id="custom-form"> <!-- This is the form that contains all the data needed to be formatted when the user clicks the submit button -->
-                    <div class="form-page active" id="preliminary"> <!-- Where the form inputs are -->
-                        <h2>Camera Initial Setup</h2>
-
-                        <p></p>
-
-                        <div class="input-group"> <!-- For formatting -->
-                            <label for="num-cam">NUMBER OF CAMERAS:</label>
-                            <input type="number" id="num-cam" name="num-cam" required> <!-- This is the # of cams, corresponds to numCamInput from renderer.js -->
-                        </div>
-
-                        <button type="button" class="generateButton" data-next="cam-custom">NEXT</button> <!-- Triggers HTML generation -->
-                    </div>
-
-                    <div id="camera-forms-container"></div> <!-- This is where the dynamic HTML will be generated -->
-
-                </form>
-
-                <div class="form-page" id="guide"> <!-- just the guide page, maybe write some better instructions later -->
-                    <h2>Guide</h2>
-
-                    <p>Welcome to the SAFE customization application.</p>
-
-                    <p>
-                        This app will allow you to quickly generate the input JSON file for your SAFE program.
-                        Please enter what the application prompts into the input boxes. Once you have finished,
-                        you may click the submit button and the file will be downloaded to your downloads folder.
-                    </p>
-                    <p>After that, simply drag the file into the folder labelled 'data' in your SAFE program
-                        directory ('Merge') and you are done.
-                    </p>
-                </div>
+            <div class="text">
+                <h2>     EDIT</h2>
             </div>
         </div>
-    </div>
-    <script src="renderer.js"></script> <!-- links the script to the HTML. DO NOT DELETE -->
-</body>
 
-</html>
+        <div class="content">
+            <div class="text">
+                <p></p> <br>
+                <p>This section will <u>create</u> a JSON config file from scratch. <br><br> There is no file upload. There will be no pre-loaded inputs.</p>
+                <br>
+            </div>
+
+            <div class="text">
+                <p></p> <br>
+                <p>  This section will <u>edit</u> an existing JSON config file. <br><br> You will need to upload a file. The form will contain pre-loaded inputs from your file.</p>
+                <br>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="text">
+                <button id="createBtn">CREATE</button>
+            </div>
+            
+            <div class="text">
+                <button id="editBtn">EDIT</button>
+            </div>
+        </div>
+        
+        <div class="back"></div>
+        <div class="back1"></div>
+        <div class="back2"></div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
